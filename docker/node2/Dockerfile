@@ -21,12 +21,12 @@ EXPOSE $PORT 5858 9229
 
 # install dependencies first, in a different location for easier app bind mounting for local development
 WORKDIR /opt
-COPY  /node_publicher/package*.json ./
+COPY  /node2/package*.json ./
 RUN npm install && npm cache clean --force
 ENV PATH /opt/node_modules/.bin:$PATH
 
 # copy in our source code last, as it changes the most
 WORKDIR /opt/app
-COPY /node_publicher /opt/app
+COPY /node2 /opt/app
 
 CMD [ "node", "app.js" ]

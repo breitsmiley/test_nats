@@ -35,6 +35,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
 <script>
     // var socket = io();
+    var loopIntervalId = null;
+
     var num = 0;
     $('form').submit(function(e){
         e.preventDefault();
@@ -51,23 +53,25 @@
                 dataType: "json",
                 data: {
                     msg: msg,
-                    n: num++,
+                    n: num,
                     payload: "payload"
                 },
                 error: function(jqXHR, textStatus, errorThrown){
+                    clearInterval(loopIntervalId);
                     alert(textStatus + ': ' + errorThrown);
                 }
 
             }).done(function( response ) {
                 $('#messages').prepend($('<li>').html('#' + num  + ' : ' + '<b>' + msg + '</b>  - ' + date.toLocaleTimeString()));
+                num++;
                 // window.scrollTo(0, document.body.scrollHeight);
             });
 
             $('#m').val('');
+
         }
     });
 
-    var loopIntervalId = null;
 
     $('#loop').on('change', function (e) {
         e.preventDefault();
