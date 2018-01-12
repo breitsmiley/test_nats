@@ -132,6 +132,21 @@ services:
       placement:
         constraints: [node.role == manager]
 
+  sf:
+    build:
+      context: .
+      dockerfile: ./docker/sf/Dockerfile
+    ports:
+      - "8083:8080"
+    depends_on:
+      - nats
+    volumes:
+      - type: bind
+        source: ./sf
+        target: /srv/sf
+#    command: ["php", "-S", "0.0.0.0:8080", "-t", "/srv/sf/public"]
+    command: ["wait-for", "nats:4222", "--", "php", "-S", "0.0.0.0:8080", "-t", "/srv/sf/public"]
+
 volumes:
   np_notused:
   n1_notused:
