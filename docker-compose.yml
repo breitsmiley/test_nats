@@ -1,0 +1,86 @@
+version: '3.5'
+
+services:
+  node_publisher:
+    image: node_publisher
+    build:
+      context: .
+      args:
+        - NODE_ENV=development
+      dockerfile: ./docker/node_publicher/Dockerfile
+    ports:
+      - "8080:3000"
+    volumes:
+      - type: bind
+        source: ./node_publicher
+        target: /opt/app
+      - type: volume
+        source: np_notused
+        target: /usr/src/app/node_modules
+    depends_on:
+      - nats
+    # you can use legacy debug config or new inspect
+    # NOTE: if nodemon isn't restarting on changes, you might be on Windows
+    # which has trouble seeing file changes, so add -L to use legacy polling
+    # https://github.com/remy/nodemon#application-isnt-restarting
+    #command: ../node_modules/.bin/nodemon --debug=0.0.0.0:5858
+    #command: ../node_modules/.bin/nodemon --inspect=0.0.0.0:9229
+    #command: "npm start"
+    command: ["wait-for", "nats:4222", "--", "node", "app.js"]
+    environment:
+      - NODE_ENV=development
+
+  node1:
+    image: node1
+    build:
+      context: .
+      args:
+        - NODE_ENV=development
+      dockerfile: ./docker/node1/Dockerfile
+    ports:
+      - "8081:3000"
+    depends_on:
+      - nats
+    volumes:
+      - type: bind
+        source: ./node1
+        target: /opt/app
+      - type: volume
+        source: n1_notused
+        target: /usr/src/app/node_modules
+    command: ["wait-for", "nats:4222", "--", "node", "app.js"]
+    environment:
+      - NODE_ENV=development
+
+  node2:
+    image: node2
+    build:
+      context: .
+      args:
+        - NODE_ENV=development
+      dockerfile: ./docker/node2/Dockerfile
+    ports:
+      - "8082:3000"
+    depends_on:
+      - nats
+    volumes:
+      - type: bind
+        source: ./node2
+        target: /opt/app
+      - type: volume
+        source: n2_notused
+        target: /usr/src/app/node_modules
+    command: ["wait-for", "nats:4222", "--", "node", "app.js"]
+    environment:
+      - NODE_ENV=development
+
+  nats:
+    image: nats:1.0.4-linux
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+
+volumes:
+  np_notused:
+  n1_notused:
+  n2_notused:
