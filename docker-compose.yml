@@ -2,7 +2,7 @@ version: '3.5'
 
 services:
   node_publisher:
-    image: node_publisher
+    image: nats_node_publicher
     build:
       context: .
       args:
@@ -37,9 +37,9 @@ services:
       restart_policy:
         condition: on-failure
       placement:
-        constraints: [node.role == manager]
+        constraints: [node.hostname == nats-india]
   node1:
-    image: node1
+    image: nats_node1
     build:
       context: .
       args:
@@ -60,8 +60,6 @@ services:
     environment:
       - NODE_ENV=development
     deploy:
-      labels:
-        - "nats.node=node1"
       replicas: 1
       update_config:
         parallelism: 2
@@ -69,10 +67,10 @@ services:
       restart_policy:
         condition: on-failure
       placement:
-        constraints: [node.labels.nats.node1 == node1]
+        constraints: [node.hostname == nats-london]
 
   node2:
-    image: node2
+    image: nats_node2
     build:
       context: .
       args:
@@ -93,8 +91,6 @@ services:
     environment:
       - NODE_ENV=development
     deploy:
-      labels:
-        - "nats.node=node2"
       replicas: 1
       update_config:
         parallelism: 2
@@ -102,37 +98,9 @@ services:
       restart_policy:
         condition: on-failure
       placement:
-        constraints: [node.labels.nats.node1 == node2]
-
-  nats:
-    image: nats:1.0.4-linux
-    ports:
-      - "4222:4222"
-      - "8222:8222"
-    deploy:
-      labels:
-        - "nats.node=nats"
-      replicas: 1
-      update_config:
-        parallelism: 2
-        delay: 10s
-      restart_policy:
-        condition: on-failure
-      placement:
-        constraints: [node.labels.nats.node1 == nats]
-
-  visualizer:
-    image: dockersamples/visualizer
-    ports:
-      - "80:8080"
-    stop_grace_period: 1m30s
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    deploy:
-      placement:
-        constraints: [node.role == manager]
-
+        constraints: [node.hostname == nats-ny1]
   sf:
+    image: nats_sf
     build:
       context: .
       dockerfile: ./docker/sf/Dockerfile
@@ -146,6 +114,38 @@ services:
         target: /srv/sf
 #    command: ["php", "-S", "0.0.0.0:8080", "-t", "/srv/sf/public"]
     command: ["wait-for", "nats:4222", "--", "php", "-S", "0.0.0.0:8080", "-t", "/srv/sf/public"]
+
+  nats:
+    image: nats_nats
+    build:
+      context: .
+      dockerfile: ./docker/nats/Dockerfile
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.hostname == nats-de]
+
+  visualizer:
+    image: nats_visualizer
+    build:
+      context: .
+      dockerfile: ./docker/vizualizer/Dockerfile
+    ports:
+      - "80:8080"
+    stop_grace_period: 1m30s
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
 
 volumes:
   np_notused:

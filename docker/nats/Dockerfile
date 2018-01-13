@@ -1,0 +1,1 @@
+FROM nats:1.0.4-linux

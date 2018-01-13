@@ -70,7 +70,6 @@ services:
         constraints: [node.hostname == nats-london]
 
   node2:
-#    image: node2
     image: breitsmiley/nats_node2
 #    build:
 #      context: .
@@ -100,9 +99,27 @@ services:
         condition: on-failure
       placement:
         constraints: [node.hostname == nats-ny1]
+  sf:
+    image: breitsmiley/nats_sf
+#    build:
+#      context: .
+#      dockerfile: ./docker/sf/Dockerfile
+    ports:
+      - "8083:8080"
+    depends_on:
+      - nats
+#    volumes:
+#      - type: bind
+#        source: ./sf
+#        target: /srv/sf
+#    command: ["php", "-S", "0.0.0.0:8080", "-t", "/srv/sf/public"]
+    command: ["wait-for", "nats:4222", "--", "php", "-S", "0.0.0.0:8080", "-t", "/srv/sf/public"]
 
   nats:
     image: breitsmiley/nats_nats
+#    build:
+#      context: .
+#      dockerfile: ./docker/nats/Dockerfile
     ports:
       - "4222:4222"
       - "8222:8222"
@@ -118,6 +135,9 @@ services:
 
   visualizer:
     image: breitsmiley/nats_visualizer
+#    build:
+#      context: .
+#      dockerfile: ./docker/vizualizer/Dockerfile
     ports:
       - "80:8080"
     stop_grace_period: 1m30s
