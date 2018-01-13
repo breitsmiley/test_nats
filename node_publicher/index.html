@@ -16,7 +16,7 @@
     </style>
   </head>
   <body>
-    <h1>Public Message - connected to node_publicher via Socket.1io</h1>
+    <h1>Public Message - connected to node_publicher via Socket.io</h1>
     <hr>
     <ul id="messages"></ul>
 
@@ -58,7 +58,7 @@
                 },
                 error: function(jqXHR, textStatus, errorThrown){
                     clearInterval(loopIntervalId);
-                    alert(textStatus + ': ' + errorThrown);
+                    console.log('Ajax throw error', errorThrown);
                 }
 
             }).done(function( response ) {

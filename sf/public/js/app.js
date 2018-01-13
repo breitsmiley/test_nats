@@ -2,6 +2,8 @@ $(function () {
 
     if ($('div.pub-container').length) {
 
+        console.log('div.pub-container');
+
         var $form = $("form");
         var $msgLog = $("#msgLog");
         var $msgInput= $("#msg");
@@ -25,10 +27,11 @@ $(function () {
                 }).done(function (data) {
                     $msgLog.prepend($('<li>').html('#' + num + ' : ' + '<b>' + msg + '</b>  - ' + date.toLocaleTimeString()));
                     // $msgInput.val('');
+                    // console.log(data);
                     num++;
 
                 }).fail(function (jqXHR, textStatus, errorThrown) {
-                    alert(errorThrown);
+                    console.log('Ajax throw error', errorThrown);
                 });
             }
         });
@@ -37,52 +40,46 @@ $(function () {
 
     if ($('div.sub-container').length) {
 
+        console.log('div.sub-container');
+
         var $msgLog = $("#msgLog");
-        
-        var socket = io();
-        // $('form').submit(function(){
-        //     socket.emit('message1', $('#m').val());
-        //     $('#m').val('');
-        //     return false;
-        // });
-        var date = new Date();
-        socket.on('message1', function(msg){
-            $('#messages').prepend($('<li>').html('<b>' + msg + '</b>  - ' + date.toLocaleTimeString()));
-            // window.scrollTo(0, document.body.scrollHeight);
-        });
 
 
+        (function poll() {
+            setTimeout(function() {
+                $.ajax({
+                    type: 'POST',
+                    dataType: "json",
+                    url: '/ajax/sub',
+                    data: {},
+                    success: function(data) {
+                        if (data.msg == '') {
+                            return;
+                        }
+                        var date = new Date();
+                        $msgLog.prepend($('<li>').html('<b>' + data.msg + '</b>  - ' + date.toLocaleTimeString()));
+                    },
+                    complete: poll
+                });
+            }, 3000);
+        })();
 
-        // var $form = $("form");
-        // var $msgLog = $("#msgLog");
-        // var $msgInput= $("#msg");
-        // var num =  0;
+        // setInterval(function () {
+        //     $.ajax({
+        //         type: 'POST',
+        //         url: '/ajax/sub',
+        //         data: {}
+        //     }).done(function (data) {
         //
-        // $form.submit(function(e){
-        //     e.preventDefault();
-        //     e.stopPropagation();
-        //
-        //     var date = new Date();
-        //     var msg =  $msgInput.val();
-        //
-        //     if (msg != '') {
-        //         $.ajax({
-        //             type: 'POST',
-        //             url: '/ajax/pub',
-        //             data: {
-        //                 msg: msg,
-        //                 num: num
-        //             }
-        //         }).done(function (data) {
-        //             $msgLog.prepend($('<li>').html('#' + num + ' : ' + '<b>' + msg + '</b>  - ' + date.toLocaleTimeString()));
-        //             // $msgInput.val('');
-        //             num++;
-        //
-        //         }).fail(function (jqXHR, textStatus, errorThrown) {
-        //             alert(errorThrown);
-        //         });
-        //     }
-        // });
+        //         if (data.msg == '') {
+        //             return;
+        //         }
+        //         var date = new Date();
+        //         $msgLog.prepend($('<li>').html('<b>' + data.msg + '</b>  - ' + date.toLocaleTimeString()));
+        //     }).fail(function (jqXHR, textStatus, errorThrown) {
+        //         console.log('Ajax throw error', errorThrown);
+        //     });
+        // }, 2000);
     }
 
 });

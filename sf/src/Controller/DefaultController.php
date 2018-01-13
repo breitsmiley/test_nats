@@ -32,4 +32,21 @@ class DefaultController extends AbstractController
 
         return $this->json(['status' => true]);
     }
+
+//    /**
+//     * @Route("/sub", name="sub")
+//     */
+//    public function sub()
+//    {
+//        return $this->render('sub.html.twig');
+//    }
+//
+//
+//    /**
+//     * @Route("/ajax/sub", name="ajax_sub")
+//     */
+//    public function subAjax(NatsManager $natsManager)
+//    {
+//        return $this->json(['msg' => $natsManager->gwtMsg()]);
+//    }
 }

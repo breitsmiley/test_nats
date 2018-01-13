@@ -13,7 +13,6 @@ class NatsManager
     const NATS_PORT = 4222;
     const NATS_CHANNEL = 'ch1';
 
-    private $client;
     private $logger;
 
     /**
@@ -23,11 +22,25 @@ class NatsManager
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
+    }
 
+    private function getClient()
+    {
         $connectionOptions = new NatsConnectionOptions();
         $connectionOptions->setHost(self::NATS_HOST)
             ->setPort(self::NATS_PORT);
-        $this->client =  new NatsConnection($connectionOptions);
+        $client =  new NatsConnection($connectionOptions);
+
+        try {
+            $client->connect();
+        } catch (\Exception $e) {
+            $client->close();
+            $this->logger->warning($e->getMessage());
+            return false;
+        }
+
+        return $client;
+
     }
 
     /**
@@ -36,22 +49,51 @@ class NatsManager
      */
     public function publishMsg($msg)
     {
-        try {
-            $this->client->connect();
-        } catch (\Exception $e) {
-            $this->logger->warn($e->getMessage());
+        $client = $this->getClient();
+
+        if (empty($client)) {
             return false;
         }
 
         try {
-            $this->client->publish(self::NATS_CHANNEL, $msg);
+            $client->publish(self::NATS_CHANNEL, $msg);
         } catch (\Exception $e) {
-            $this->logger->warn($e->getMessage());
+            $this->logger->warning($e->getMessage());
             return false;
+        } finally {
+            $client->close();
         }
 
         return true;
     }
 
+    /**
+     *
+     */
+    public function gwtMsg() {
+
+        $client = $this->getClient();
+
+        if (empty($client)) {
+            return false;
+        }
+
+//        $client->setStreamTimeout(0);
+
+        $msg = '';
+        $client->subscribe(
+            self::NATS_CHANNEL,
+            function ($message) use (&$msg) {
+                $msg = $message->getBody();
+//                $this->logger->info($msg);
+            }
+        );
+
+
+        $client->wait(1);
+        $client->close();
+
+        return $msg;
+    }
 
 }
