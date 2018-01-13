@@ -13,7 +13,6 @@ var io = require('socket.io')(http);
 
 // https://github.com/nats-io/node-nats
 var NATS = require('nats');
-// var nats = NATS.connect();
 var nats = NATS.connect({'url':"nats://" + NATS_SERVER + ":4222"});
 
 // App
@@ -28,7 +27,6 @@ nats.subscribe(NATS_CHANNEL, function(msg) {
   io.emit(SOCKET_IO_CHANNEL, msg);
 });
 
-
 http.listen(PORT, HOST, function(){
-  console.log(`Node2 client is running on http://${HOST}:${PORT}`);
+  console.log(`Node2 is runned on http://${HOST}:${PORT}`);
 });

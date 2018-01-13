@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class DefaultController extends AbstractController
 {
     /**
-     * @Route("/pub", name="pub")
+     * @Route("/", name="pub")
      */
     public function pub()
     {
@@ -27,9 +27,8 @@ class DefaultController extends AbstractController
         $msg = $requestData['msg'];
         $num = $requestData['num'];
 
-        $msg = '# ' . $num . '_' . $msg . ' [sf1]';
+        $msg = "[SF] #{$num}: \"<b>{$msg}</b>\"";
         $natsManager->publishMsg($msg);
-
         return $this->json(['status' => true]);
     }
 

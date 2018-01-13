@@ -1,98 +1,85 @@
-
 <!doctype html>
 <html>
-  <head>
-    <title>Client 1 - connected to node1 via Socket.io</title>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 30%; margin-right: .5%; }
-      form button { width: 3%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
-      #loop {width: 5%; text-align: right;}
-    </style>
-  </head>
-  <body>
-    <h1>Public Message - connected to node_publicher via Socket.io</h1>
-    <hr>
-    <ul id="messages"></ul>
+    <head>
+        <title>Node Publisher client</title>
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font: 13px Helvetica, Arial; }
+            form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+            form input { border: 0; padding: 10px; width: 30%; margin-right: .5%; }
+            form button { width: 3%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+            #messages { list-style-type: none; margin: 0; padding: 0; }
+            #messages li { padding: 5px 10px; }
+            #messages li:nth-child(odd) { background: #eee; }
+            #loop {width: 5%; text-align: right;}
+        </style>
+    </head>
+    <body>
+        <h1>Node Publisher client</h1>
+        <hr>
+        <ul id="messages"></ul>
 
-     <form action="">
-         <span style="color: white;">Random Loop</span> <input id="loop" type="checkbox" />
-         <input id="m" autocomplete="off" /><button>Send</button>
+         <form action="">
+             <span style="color: white;">Random Loop</span> <input id="loop" type="checkbox" />
+             <input id="m" autocomplete="off" /><button>Send</button>
+        </form>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous">
+        </script>
+        <script>
+            var loopIntervalId = null;
+            var num = 0;
+            var $m = $('#m');
 
-    </form>
+            $('form').submit(function(e) {
+                e.preventDefault();
+                e.stopPropagation();
 
+                var date = new Date();
+                var msg =  $m.val();
 
+                if (msg != '') {
+                    $.ajax({
+                        url: "/push",
+                        cache: false,
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            msg: msg,
+                            n: num,
+                            payload: "payload"
+                        },
+                        error: function(jqXHR, textStatus, errorThrown){
+                            clearInterval(loopIntervalId);
+                            console.log('Ajax throw error', errorThrown);
+                        }
 
-<script src="https://code.jquery.com/jquery-3.2.1.min.js"
-    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-    crossorigin="anonymous">
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
-<script>
-    // var socket = io();
-    var loopIntervalId = null;
-
-    var num = 0;
-    $('form').submit(function(e){
-        e.preventDefault();
-        e.stopPropagation();
-
-        var date = new Date();
-        var msg =  $('#m').val();
-        // socket.emit('message1', $('#m').val());
-        if (msg != '') {
-            $.ajax({
-                url: "/push",
-                cache: false,
-                type: "POST",
-                dataType: "json",
-                data: {
-                    msg: msg,
-                    n: num,
-                    payload: "payload"
-                },
-                error: function(jqXHR, textStatus, errorThrown){
-                    clearInterval(loopIntervalId);
-                    console.log('Ajax throw error', errorThrown);
+                    }).done(function( response ) {
+                        // [NP] #164: "11763" - 4:04:09 AM
+                        $('#messages').prepend($('<li>').html('[NP] #' + num  + ' : ' + '"<b>' + msg + '</b>" - ' + date.toLocaleTimeString()));
+                        num++;
+                        // window.scrollTo(0, document.body.scrollHeight);
+                    });
+                    $m.val('');
                 }
-
-            }).done(function( response ) {
-                $('#messages').prepend($('<li>').html('#' + num  + ' : ' + '<b>' + msg + '</b>  - ' + date.toLocaleTimeString()));
-                num++;
-                // window.scrollTo(0, document.body.scrollHeight);
             });
 
-            $('#m').val('');
+            $('#loop').on('change', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
 
-        }
-    });
-
-
-    $('#loop').on('change', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        if ($(e.target).prop('checked')) {
-            loopIntervalId = setInterval(function () {
-                $('#m').val(Math.floor(Math.random() * (10000 - 1) + 10000));
-                // slee
-                $('form').submit();
-            }, 1000);
-        } else if (loopIntervalId) {
-            clearInterval(loopIntervalId);
-        }
-    }).change();
-    // socket.on('message1', function(msg){
-    //     $('#messages').append($('<li>').text(msg));
-    //     window.scrollTo(0, document.body.scrollHeight);
-    // });
-</script>
-    
-  </body>
+                if ($(e.target).prop('checked')) {
+                    loopIntervalId = setInterval(function () {
+                        $('#m').val(Math.floor(Math.random() * (10000 - 1) + 10000));
+                        // slee
+                        $('form').submit();
+                    }, 1000);
+                } else if (loopIntervalId) {
+                    clearInterval(loopIntervalId);
+                }
+            }).change();
+        </script>
+    </body>
 </html>
     
