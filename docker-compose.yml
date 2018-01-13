@@ -147,6 +147,20 @@ services:
       placement:
         constraints: [node.role == manager]
 
+#  nginx:
+#    image: nats_nginx
+#    build:
+#      context: .
+#      dockerfile: ./docker/nginx/Dockerfile
+#    deploy:
+#      replicas: 5
+#    ports:
+#      - "81:80"
+#    volumes:
+#      - type: bind
+#        source: ./nginx
+#        target: /srv/app/public
+
 volumes:
   np_notused:
   n1_notused:

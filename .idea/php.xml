@@ -1,4 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="PhpIncludePathManager">
+    <include_path>
+      <path value="$PROJECT_DIR$/sf/vendor/repejota/nats" />
+      <path value="$PROJECT_DIR$/sf/vendor/ircmaxell/random-lib" />
+      <path value="$PROJECT_DIR$/sf/vendor/ircmaxell/security-lib" />
+      <path value="$PROJECT_DIR$/sf/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/sf/vendor/monolog/monolog" />
+      <path value="$PROJECT_DIR$/sf/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/sf/vendor/psr/cache" />
+      <path value="$PROJECT_DIR$/sf/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/sf/vendor/doctrine/lexer" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/monolog-bridge" />
+      <path value="$PROJECT_DIR$/sf/vendor/doctrine/annotations" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/monolog-bundle" />
+      <path value="$PROJECT_DIR$/sf/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/sf/vendor/doctrine/collections" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/yaml" />
+      <path value="$PROJECT_DIR$/sf/vendor/composer" />
+      <path value="$PROJECT_DIR$/sf/vendor/doctrine/common" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/config" />
+      <path value="$PROJECT_DIR$/sf/vendor/doctrine/cache" />
+      <path value="$PROJECT_DIR$/sf/vendor/sensio/framework-extra-bundle" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/sf/vendor/twig/twig" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/flex" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/dotenv" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/twig-bundle" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/routing" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/twig-bridge" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/filesystem" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/http-kernel" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/debug" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/dependency-injection" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/framework-bundle" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/cache" />
+      <path value="$PROJECT_DIR$/sf/vendor/symfony/console" />
+    </include_path>
+  </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.2" />
 </project>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nginx Container Test</title>
+</head>
+<body>
+<h1>Droplet Nginx</h1>
+<ul>
+    <li>IP:
+        <b><!--# echo var="server_addr" default="server_addr" --></b>
+    </li>
+    <li>Hostname:
+        <b><!--# echo var="hostname" default="hostname" --></b>
+    </li>
+    <li>Time local:
+        <b><!--# echo var="time_local" default="time_local" --></b>
+    </li>
+    <li>Time iso8601:
+        <b><!--# echo var="time_iso8601" default="time_iso8601" --></b>
+    </li>
+</ul>
+</body>
+</html>
