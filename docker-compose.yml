@@ -173,6 +173,91 @@ services:
       restart_policy:
         condition: on-failure
 
+# NATS Streaming
+#-----------------------------------------
+  node_publisher_s:
+    image: nats_node_publicher_s
+    build:
+      context: .
+      args:
+        - NODE_ENV=development
+      dockerfile: ./docker/node_publicher_s/Dockerfile
+    ports:
+      - "8084:3000"
+    volumes:
+      - type: bind
+        source: ./node_publicher_s
+        target: /opt/app
+      - type: volume
+        source: nps_notused
+        target: /usr/src/app/node_modules
+    depends_on:
+      - natss
+    # you can use legacy debug config or new inspect
+    # NOTE: if nodemon isn't restarting on changes, you might be on Windows
+    # which has trouble seeing file changes, so add -L to use legacy polling
+    # https://github.com/remy/nodemon#application-isnt-restarting
+    #command: ../node_modules/.bin/nodemon --debug=0.0.0.0:5858
+    #command: ../node_modules/.bin/nodemon --inspect=0.0.0.0:9229
+    #command: "npm start"
+    command: ["wait-for", "natss:4222", "--", "node", "app.js"]
+    environment:
+      - NODE_ENV=development
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+  node1_s:
+    image: nats_node1_s
+    build:
+      context: .
+      args:
+        - NODE_ENV=development
+      dockerfile: ./docker/node1_s/Dockerfile
+    ports:
+      - "8085:3000"
+    depends_on:
+      - natss
+    volumes:
+      - type: bind
+        source: ./node1_s
+        target: /opt/app
+      - type: volume
+        source: n1s_notused
+        target: /usr/src/app/node_modules
+    command: ["wait-for", "natss:4222", "--", "node", "app.js"]
+    environment:
+      - NODE_ENV=development
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+  natss:
+    image: nats_natss
+    build:
+      context: .
+      dockerfile: ./docker/natss/Dockerfile
+    ports:
+      - "4225:4222"
+      - "8225:8222"
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+#-----------------------------------------
+
+
   visualizer:
     image: nats_visualizer
     build:
@@ -203,5 +288,7 @@ services:
 
 volumes:
   np_notused:
+  nps_notused:
   n1_notused:
   n2_notused:
+  n1s_notused:

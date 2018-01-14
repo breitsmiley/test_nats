@@ -1,0 +1,14 @@
+{
+  "name": "node_publicher_s",
+  "version": "1.0.0",
+  "description": "Node.js on Docker",
+  "author": "Nats node_publicher_s <test@example.com>",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.16.2",
+    "node-nats-streaming": "^0.0.26"
+  }
+}
