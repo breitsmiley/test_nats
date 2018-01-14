@@ -51,11 +51,11 @@ nats.on('error', function(err) {
 
 nats.on('connect', function(nc) {
     // currentServer is the URL of the connected server.
-    console.log("Connected to " + nats.currentServer.url.host);
+    console.log("Connected to ", nats.currentServer);
 });
 
 nats.on('disconnect', function() {
-    console.log('disconnect');
+    console.log('disconnect', nats.currentServer);
 });
 
 nats.on('reconnecting', function() {
@@ -64,7 +64,7 @@ nats.on('reconnecting', function() {
 
 nats.on('reconnect', function(nc) {
     // currentServer is the URL of the connected server.
-    console.log("Reconnect to " + nats.currentServer.url.host);
+    console.log("Reconnect to ",  nats.currentServer);
 });
 
 nats.on('close', function() {
