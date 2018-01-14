@@ -9,7 +9,7 @@ use Psr\Log\LoggerInterface;
 
 class NatsManager
 {
-    const NATS_HOST = 'nats';
+    const NATS_HOST = 'nats_c';
     const NATS_PORT = 4222;
     const NATS_CHANNEL = 'ch1';
 

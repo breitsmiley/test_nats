@@ -1,4 +1,5 @@
 version: '3.5'
+
 services:
   node_publisher:
     image: breitsmiley/nats_node_publicher
@@ -17,7 +18,9 @@ services:
         source: np_notused
         target: /usr/src/app/node_modules
     depends_on:
-      - nats
+      - nats_a
+      - nats_b
+      - nats_c
     # you can use legacy debug config or new inspect
     # NOTE: if nodemon isn't restarting on changes, you might be on Windows
     # which has trouble seeing file changes, so add -L to use legacy polling
@@ -25,7 +28,8 @@ services:
     #command: ../node_modules/.bin/nodemon --debug=0.0.0.0:5858
     #command: ../node_modules/.bin/nodemon --inspect=0.0.0.0:9229
     #command: "npm start"
-    command: ["wait-for", "nats:4222", "--", "node", "app.js"]
+    command: ["wait-for", "nats_a:4222", "--", "node", "app.js"]
+#    command: ["node", "app.js"]
     environment:
       - NODE_ENV=development
     deploy:
@@ -47,7 +51,9 @@ services:
     ports:
       - "8081:3000"
     depends_on:
-      - nats
+      - nats_a
+      - nats_b
+      - nats_c
     volumes:
 #      - type: bind
 #        source: ./node1
@@ -55,7 +61,8 @@ services:
       - type: volume
         source: n1_notused
         target: /usr/src/app/node_modules
-    command: ["wait-for", "nats:4222", "--", "node", "app.js"]
+    command: ["wait-for", "nats_a:4222", "--", "node", "app.js"]
+#    command: ["node", "app.js"]
     environment:
       - NODE_ENV=development
     deploy:
@@ -78,7 +85,9 @@ services:
     ports:
       - "8082:3000"
     depends_on:
-      - nats
+      - nats_a
+      - nats_b
+      - nats_c
     volumes:
 #      - type: bind
 #        source: ./node2
@@ -86,7 +95,8 @@ services:
       - type: volume
         source: n2_notused
         target: /usr/src/app/node_modules
-    command: ["wait-for", "nats:4222", "--", "node", "app.js"]
+    command: ["wait-for", "nats_a:4222", "--", "node", "app.js"]
+#    command: ["node", "app.js"]
     environment:
       - NODE_ENV=development
     deploy:
@@ -106,19 +116,20 @@ services:
     ports:
       - "8083:8080"
     depends_on:
-      - nats
+      - nats_c
 #    volumes:
 #      - type: bind
 #        source: ./sf
 #        target: /srv/sf
 #    command: ["php", "-S", "0.0.0.0:8080", "-t", "/srv/sf/public"]
-    command: ["wait-for", "nats:4222", "--", "php", "-S", "0.0.0.0:8080", "-t", "/srv/sf/public"]
+    command: ["wait-for", "nats_a:4222", "--", "php", "-S", "0.0.0.0:8080", "-t", "/srv/sf/public"]
+#    command: ["php", "-S", "0.0.0.0:8080", "-t", "/srv/sf/public"]
 
-  nats:
-    image: breitsmiley/nats_nats
+  nats_a:
+    image: breitsmiley/nats_nats_a
 #    build:
 #      context: .
-#      dockerfile: ./docker/nats/Dockerfile
+#      dockerfile: ./docker/nats/a/Dockerfile
     ports:
       - "4222:4222"
       - "8222:8222"
@@ -131,6 +142,38 @@ services:
         condition: on-failure
       placement:
         constraints: [node.hostname == nats-de]
+
+  nats_b:
+    image: breitsmiley/nats_nats_b
+#    build:
+#      context: .
+#      dockerfile: ./docker/nats/b/Dockerfile
+    ports:
+      - "4223:4222"
+      - "8223:8222"
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+  nats_c:
+    image: breitsmiley/nats_nats_c
+#    build:
+#      context: .
+#      dockerfile: ./docker/nats/c/Dockerfile
+    ports:
+      - "4224:4222"
+      - "8224:8222"
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
 
   visualizer:
     image: breitsmiley/nats_visualizer
